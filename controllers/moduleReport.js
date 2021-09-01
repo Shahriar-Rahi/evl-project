@@ -1,6 +1,6 @@
 const ModuleReport = require('../models/moduleReport');
 
-exports.addModuleReport = (req, res, next) => {
+exports.addModuleReport = async (req, res, next) => {
     let preRes = {
         success: false,
         message: "Module Report creation successful",
@@ -20,6 +20,20 @@ exports.addModuleReport = (req, res, next) => {
         correctMark,
         totalMark,
         userId
+    }
+    try {
+        const userModuleReport = await ModuleReport.findOne({ userId: userId });
+        if (userModuleReport) {
+            preRes.success = false;
+            preRes.message = "Module Report for this User Already Exists, you can only update the module names after creation";
+            return res.status(409).json(preRes);
+        }
+    } catch (err) {
+
+        preRes.success = false;
+        preRes.message = "Couldn't check existence " + err;
+        return res.status(500).json(preRes);
+
     }
     const moduleReport = new ModuleReport(moduleReportData);
     moduleReport.save()
@@ -44,10 +58,10 @@ exports.getModuleReport = (req, res, next) => {
         data: {}
     }
     ModuleReport.find().then(modReps => {
-        preRes.succes = true;
+        preRes.success = true;
         preRes.message = "Module Reports fetched successfully";
         preRes.data = modReps;
-        res.status(201).json(preRes);
+        res.status(200).json(preRes);
     }).catch(err => {
         preRes.message = "Couldn't fetch Module Reports"
         res.status(500).json(preRes);
@@ -86,7 +100,7 @@ exports.updateModuleReport = (req, res, next) => {
     //     correctMark,
     //     totalMark
     // }
-    User.findById(modRepId).then(modRep => {
+    ModuleReport.findById(modRepId).then(modRep => {
         if (!modRep) {
             const error = new Error('Could not find module report.');
             error.statusCode = 404;
@@ -103,7 +117,7 @@ exports.updateModuleReport = (req, res, next) => {
         return res.status(200).json(preRes);
     }).catch(err => {
         preRes.message = err.message;
-        return res.status(err.status).json(preRes);
+        return res.status(err.statusCode).json(preRes);
 
     });
 }
@@ -125,21 +139,20 @@ exports.deleteModuleReport = (req, res, next) => {
     else {
         modRepId = req.params.modRepId;
     }
-
-    User.findById(modRepId).then(modRep => {
+    ModuleReport.findById(modRepId).then(modRep => {
         if (!modRep) {
             const error = new Error('Could not find module report.');
             error.statusCode = 404;
             throw error;
         }
-        return User.findByIdAndRemove(modRepId);
+        return ModuleReport.findByIdAndRemove(modRepId);
     }).then(() => {
         preRes.success = true;
         preRes.message = `module report deleted successfully`;
         return res.status(200).json(preRes);
     }).catch(err => {
         preRes.message = err.message;
-        return res.status(err.status).json(preRes);
+        return res.status(err.statusCode).json(preRes);
 
     });
 }

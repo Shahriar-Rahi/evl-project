@@ -88,7 +88,7 @@ exports.showLeaderboard = (req, res, next) => {
             preRes.success = false;
             preRes.message = `Couldn't create the leaderboard ${err}`;
             preRes.data = {};
-            return res.status(201).json(preRes);
+            return res.status(500).json(preRes);
             //next(preRes);
         });
 }

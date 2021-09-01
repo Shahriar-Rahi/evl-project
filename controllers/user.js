@@ -1,6 +1,6 @@
 const User = require('../models/user');
 
-exports.addUser = (req, res, next) => {
+exports.addUser = async (req, res, next) => {
     let preRes = {
         success: false,
         message: "user creation successful",
@@ -21,33 +21,27 @@ exports.addUser = (req, res, next) => {
         phone: phone,
         userCode: userCode
     }
-    User.findOne({ email: email }).then(userDoc => {
-        if (userDoc) {
+    try {
+        const userDocEmail = await User.findOne({ email: email });
+        const userDocCode = await User.findOne({ userCode: userCode });
+        if (userDocEmail || userDocCode) {
             preRes.success = false;
             preRes.message = "User Already Exists";
             return res.status(409).json(preRes);
         }
-    }).catch(err => {
+    } catch (err) {
+
         preRes.success = false;
         preRes.message = "Couldn't check existence" + err;
         return res.status(500).json(preRes);
-        //next(preRes);
-    });
-    User.findOne({ userCode: userCode }).then(userDoc => {
-        if (userDoc) {
-            preRes.success = false;
-            preRes.message = "User Already Exists";
-            return res.status(409).json(preRes);
-        }
-    }).catch(err => {
-        preRes.success = false;
-        preRes.message = "Couldn't check existence" + err;
-        return res.status(500).json(preRes);
-        //next(preRes);
-    });
+
+    }
+
+
     const user = new User(userData);
     user.save()
         .then(result => {
+            console.log('why i am here');
             preRes.success = true;
             preRes.message = "User Created Successfully"
             preRes.data = { ...result._doc };
@@ -68,14 +62,14 @@ exports.getUser = (req, res, next) => {
         data: {}
     }
     User.find().then(users => {
-        preRes.succes = true;
+        preRes.success = true;
         preRes.message = "Users fetched successfully";
         preRes.data = users;
-        res.status(201).json(preRes);
+        res.status(200).json(preRes);
     }).catch(err => {
         preRes.message = "Couldn't fetch user"
         res.status(500).json(preRes);
-    })
+    });
 }
 
 exports.updateUser = (req, res, next) => {
