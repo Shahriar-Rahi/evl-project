@@ -10,30 +10,26 @@
 
 <br/>
 
-## Preparation
-
-# npm install
-# npm start || npm restart
-
 ## Dependencies
 
-# npm
-# nodejs
-# express
-# mongodb
-# mongoose
-# json2csv
-# nodemon
+- npm
+- nodejs
+- express
+- mongodb
+- mongoose
+- json2csv
+- nodemon
 
 
 <br/>
 
-### Run the project
+## Run the project
 
 ```
 $ {
     npm install
-    npm start or npm restart
+    npm start
+    npm restart
 }
 ```
 
