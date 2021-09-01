@@ -4,5 +4,6 @@ const router = express.Router();
 
 
 router.post('/show-leaderboard', leaderboardController.showLeaderboard);
+router.post('/download-leaderboard', leaderboardController.downloadLeaderboard);
 
 module.exports = router;
