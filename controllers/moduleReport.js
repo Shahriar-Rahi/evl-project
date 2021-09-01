@@ -1,4 +1,6 @@
 const ModuleReport = require('../models/moduleReport');
+const User = require('../models/user');
+const mongoose = require('mongoose');
 
 exports.addModuleReport = async (req, res, next) => {
     let preRes = {
@@ -15,6 +17,14 @@ exports.addModuleReport = async (req, res, next) => {
         return res.status(409).json(preRes);
     }
     const { completedModuleName, correctMark, totalMark, userId } = req.body;
+
+    const validId = mongoose.isValidObjectId(userId);
+    if (!validId) {
+        const errMsg = "Invalid mongo document id format in request body";
+        preRes.message = errMsg;
+        console.error(`${errMsg}`)
+        return res.status(409).json(preRes);
+    }
     moduleReportData = {
         completedModuleName,
         correctMark,
@@ -35,6 +45,20 @@ exports.addModuleReport = async (req, res, next) => {
         return res.status(500).json(preRes);
 
     }
+    try {
+        const userDoc = await User.findOne({ _id: userId });
+        if (!userDoc) {
+            preRes.success = false;
+            preRes.message = "No matching User found with this id in users collection to create a Module Report, not a valid user id";
+            return res.status(409).json(preRes);
+        }
+    } catch (err) {
+
+        preRes.success = false;
+        preRes.message = "Couldn't check existence " + err;
+        return res.status(500).json(preRes);
+
+    }
     const moduleReport = new ModuleReport(moduleReportData);
     moduleReport.save()
         .then(result => {
@@ -46,7 +70,7 @@ exports.addModuleReport = async (req, res, next) => {
         .catch(err => {
             preRes.success = false;
             preRes.message = "Couldn't save the data";
-            return res.status(201).json(preRes);
+            return res.status(500).json(preRes);
             //next(preRes);
         });
 }
@@ -76,8 +100,9 @@ exports.updateModuleReport = (req, res, next) => {
         data: {}
     }
     let modRepId;
-    if (!req.params.modRepId) {
-        const errMsg = "No params provided";
+    //const validId = mongoose.isValidObjectId(userId);
+    if (!req.params.modRepId || !(mongoose.isValidObjectId(req.params.modRepId))) {
+        const errMsg = "No params provided or bad params";
         preRes.message = errMsg;
         console.error(`${errMsg}`)
         return res.status(409).json(preRes);
@@ -102,7 +127,7 @@ exports.updateModuleReport = (req, res, next) => {
     // }
     ModuleReport.findById(modRepId).then(modRep => {
         if (!modRep) {
-            const error = new Error('Could not find module report.');
+            const error = new Error('Could not find module report with this module report id.');
             error.statusCode = 404;
             throw error;
         }
@@ -130,8 +155,8 @@ exports.deleteModuleReport = (req, res, next) => {
         data: {}
     }
     let modRepId;
-    if (!req.params.modRepId) {
-        const errMsg = "No params provided";
+    if (!req.params.modRepId || !(mongoose.isValidObjectId(req.params.modRepId))) {
+        const errMsg = "No params provided or bad params";
         preRes.message = errMsg;
         console.error(`${errMsg}`)
         return res.status(409).json(preRes);

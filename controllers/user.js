@@ -1,4 +1,6 @@
 const User = require('../models/user');
+const ModuleReport = require('../models/moduleReport');
+const mongoose = require('mongoose');
 
 exports.addUser = async (req, res, next) => {
     let preRes = {
@@ -41,7 +43,6 @@ exports.addUser = async (req, res, next) => {
     const user = new User(userData);
     user.save()
         .then(result => {
-            console.log('why i am here');
             preRes.success = true;
             preRes.message = "User Created Successfully"
             preRes.data = { ...result._doc };
@@ -79,8 +80,8 @@ exports.updateUser = (req, res, next) => {
         data: {}
     }
     let userId;
-    if (!req.params.userId) {
-        const errMsg = "No params provided";
+    if (!req.params.userId || !(mongoose.isValidObjectId(req.params.userId))) {
+        const errMsg = "No params provided or bad params";
         preRes.message = errMsg;
         console.error(`${errMsg}`)
         return res.status(409).json(preRes);
@@ -122,7 +123,7 @@ exports.updateUser = (req, res, next) => {
         return res.status(200).json(preRes);
     }).catch(err => {
         preRes.message = err.message;
-        return res.status(err.status).json(preRes);
+        return res.status(err.statusCode).json(preRes);
 
     });
 }
@@ -134,8 +135,8 @@ exports.deleteUser = (req, res, next) => {
         data: {}
     }
     let userId;
-    if (!req.params.userId) {
-        const errMsg = "No params provided";
+    if (!req.params.userId || !(mongoose.isValidObjectId(req.params.userId))) {
+        const errMsg = "No params provided or bad params";
         preRes.message = errMsg;
         console.error(`${errMsg}`)
         return res.status(409).json(preRes);
@@ -146,18 +147,47 @@ exports.deleteUser = (req, res, next) => {
 
     User.findById(userId).then(user => {
         if (!user) {
-            const error = new Error('Could not find user.');
+            const error = new Error('Could not find user with this user id.');
             error.statusCode = 404;
             throw error;
         }
         return User.findByIdAndRemove(userId);
-    }).then(() => {
-        preRes.success = true;
-        preRes.message = `user deleted successfully`;
-        return res.status(200).json(preRes);
+    }).then(async () => {
+        try {
+            const userModuleReport = await ModuleReport.findOne({ userId: userId });
+            if (userModuleReport) {
+                const modRepId = userModuleReport.id;
+                // ModuleReport.findByIdAndRemove(modRepId).then(() => {
+                //     preRes.success = true;
+                //     preRes.message = `User and it's module report data deleted successfully`;
+                //     return res.status(200).json(preRes);
+                // }).catch((err) => {
+
+                //     preRes.message = 'Something went wrong while deleting users module report data' + err;
+                //     return res.status(500).json(preRes);
+                // });
+                try {
+                   await ModuleReport.findByIdAndRemove(modRepId);
+                   preRes.success = true;
+                   preRes.message = `User and it's module report data deleted successfully`;
+                   return res.status(200).json(preRes);
+                } catch (err) {
+                    
+                    preRes.message = 'Something went wrong while deleting users module report data' + err;
+                    return res.status(500).json(preRes);
+                }
+            }
+            preRes.success = true;
+            preRes.message = `User deleted successfully`;
+            return res.status(200).json(preRes);
+
+        } catch (error) {
+            preRes.message = 'Something went wrong while deleting users module report data';
+            return res.status(500).json(preRes);
+        }
     }).catch(err => {
         preRes.message = err.message;
-        return res.status(err.status).json(preRes);
+        return res.status(err.statusCode).json(preRes);
 
     });
 }

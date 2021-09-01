@@ -185,7 +185,7 @@ exports.downloadLeaderboard = (req, res, next) => {
             if (searchUserCode !== null || searchCompletedModuleName !== null) {
                 //console.log(searchedLeaderboardData);
                 preRes.data = searchedLeaderboardData;
-                return jtc.downloadResource(res, 'downloaded-leaderboard.csv', fields, leaderboardData);
+                return jtc.downloadResource(res, 'downloaded-leaderboard.csv', fields, searchedLeaderboardData);
             }
             //console.log(leaderboardData);
             preRes.data = leaderboardData;

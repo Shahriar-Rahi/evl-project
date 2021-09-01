@@ -1,0 +1,244 @@
+{
+	"variables": [],
+	"info": {
+		"name": "ergo",
+		"_postman_id": "57b0ab96-e8ef-fc78-c492-890f72c25d6c",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create an user",
+			"request": {
+				"url": "http://localhost:4000/add-user",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"rahi\",\n\t\"email\":\"test@test.com\",\n\t\"phone\":\"0000000000\",\n\t\"userCode\":\"rahi\"\n}"
+				},
+				"description": "endpoint to create an user"
+			},
+			"response": []
+		},
+		{
+			"name": "show all users",
+			"request": {
+				"url": "http://localhost:4000/get-user",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "endpoint to list all users"
+			},
+			"response": []
+		},
+		{
+			"name": "update an user by user id",
+			"request": {
+				"url": "http://localhost:4000/update-user/612f998c6df84157a19c6bf9",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"rahi\",\n\t\"email\":\"test@test.com\",\n\t\"phone\":\"0000111111111\",\n\t\"userCode\":\"rahi\"\n}"
+				},
+				"description": "endpoint to update an user"
+			},
+			"response": []
+		},
+		{
+			"name": "create module report for an user",
+			"request": {
+				"url": "http://localhost:4000/add-module-report",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"completedModuleName\":[\"nodejs\", \"mongodb\"],\n\t\"correctMark\":70,\n\t\"totalMark\":100,\n\t\"userId\":\"612f998c6df84157a19c6bf9\"\n}"
+				},
+				"description": "endpoint for module report creation for a user"
+			},
+			"response": []
+		},
+		{
+			"name": "update a module report of an user by module report id",
+			"request": {
+				"url": "http://localhost:4000/update-module-report/612f9ff9d936ddb66ee510ee",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"completedModuleName\":[\"nodejs\", \"mongodb\", \"express\"],\n\t\"correctMark\":70,\n\t\"totalMark\":100,\n\t\"userId\":\"612f998c6df84157a19c6bf9\"\n}"
+				},
+				"description": "endpoint for updating module report"
+			},
+			"response": []
+		},
+		{
+			"name": "show all module reports of users",
+			"request": {
+				"url": "http://localhost:4000/get-module-report",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "endpoint to list all module report for all users"
+			},
+			"response": []
+		},
+		{
+			"name": "delete a module report by module report id",
+			"request": {
+				"url": "http://localhost:4000/delete-module-report/612f9ff9d936ddb66ee510ee",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": "endpoint to delete a module report by module report id"
+			},
+			"response": []
+		},
+		{
+			"name": "delete an user by user id",
+			"request": {
+				"url": "http://localhost:4000/delete-user/612f998c6df84157a19c6bf9",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": "endpoint to delete an user by user id"
+			},
+			"response": []
+		},
+		{
+			"name": "plain leaderboard",
+			"request": {
+				"url": "http://localhost:4000/show-leaderboard",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": "endpoint to show basic leaderboard"
+			},
+			"response": []
+		},
+		{
+			"name": "leaderboard with optional sorting, searching",
+			"request": {
+				"url": {
+					"raw": "http://localhost:4000/show-leaderboard?sortOrder=desc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"show-leaderboard"
+					],
+					"query": [
+						{
+							"key": "sortOrder",
+							"value": "desc",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userCode\":\"rahi\"\n}"
+				},
+				"description": "endpoint to show basic leaderboard"
+			},
+			"response": []
+		},
+		{
+			"name": "download leaderboard",
+			"request": {
+				"url": "http://localhost:4000/download-leaderboard",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": "enpoint to generate and download leaderboard csv file"
+			},
+			"response": []
+		},
+		{
+			"name": "download with search and sort",
+			"request": {
+				"url": {
+					"raw": "http://localhost:4000/download-leaderboard?sortOrder=desc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"download-leaderboard"
+					],
+					"query": [
+						{
+							"key": "sortOrder",
+							"value": "desc",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userCode\":\"mim\"\n}"
+				},
+				"description": "endpoint to download leaderboard with optional search and sort order"
+			},
+			"response": []
+		}
+	]
+}

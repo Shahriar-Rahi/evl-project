@@ -1,5 +1,3 @@
-//import { Parser } from 'json2csv';
-
 const jtc = require('json2csv');
 const fs = require('fs');
 
